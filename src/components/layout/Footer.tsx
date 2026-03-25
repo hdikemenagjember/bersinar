@@ -1,4 +1,4 @@
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, MessageCircle } from "lucide-react";
 
 const Footer = () => (
   <footer className="bg-primary text-primary-foreground mt-12">
@@ -30,12 +30,12 @@ const Footer = () => (
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-lg bg-success px-5 py-3 text-sm font-semibold text-success-foreground hover:opacity-90 transition-opacity"
         >
-          💬 Chat WhatsApp
+          <MessageCircle className="w-4 h-4" /> Chat WhatsApp
         </a>
       </div>
     </div>
     <div className="border-t border-primary-foreground/20 text-center py-4 text-xs opacity-70">
-      © 2026 Kementerian Agama Kabupaten Jember. Semua hak dilindungi.
+      &copy; 2026 Kementerian Agama Kabupaten Jember. Semua hak dilindungi.
     </div>
   </footer>
 );

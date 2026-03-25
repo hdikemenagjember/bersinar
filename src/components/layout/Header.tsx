@@ -7,7 +7,6 @@ const navLinks = [
   { label: "Beranda", href: "/" },
   { label: "Layanan", href: "/layanan" },
   { label: "Lacak Permohonan", href: "/lacak" },
-  { label: "Dashboard", href: "/dashboard" },
 ];
 
 const Header = () => {

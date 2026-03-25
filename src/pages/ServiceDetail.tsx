@@ -1,8 +1,9 @@
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Clock, CheckSquare } from "lucide-react";
+import { ArrowLeft, ArrowRight, Clock, CheckSquare, Phone } from "lucide-react";
 import PageLayout from "@/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
 import { services } from "@/data/services";
+import ServiceIcon from "@/components/ServiceIcon";
 
 const ServiceDetail = () => {
   const { id } = useParams();
@@ -27,7 +28,9 @@ const ServiceDetail = () => {
         </Link>
 
         <div className="flex items-center gap-3 mb-4">
-          <span className="text-4xl">{service.icon}</span>
+          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+            <ServiceIcon name={service.icon} className="w-6 h-6 text-primary" />
+          </div>
           <h1 className="text-heading">{service.title}</h1>
         </div>
 
@@ -62,7 +65,9 @@ const ServiceDetail = () => {
             <Link to={`/formulir/${service.id}`}>Ajukan Permohonan <ArrowRight className="ml-2 w-5 h-5" /></Link>
           </Button>
           <Button asChild variant="outline" size="lg" className="rounded-xl text-base py-6">
-            <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer">💬 Tanya via WhatsApp</a>
+            <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer">
+              <Phone className="mr-2 w-4 h-4" /> Tanya via WhatsApp
+            </a>
           </Button>
         </div>
       </div>
