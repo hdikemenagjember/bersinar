@@ -10,6 +10,8 @@ import FormPage from "./pages/FormPage";
 import SubmissionSuccess from "./pages/SubmissionSuccess";
 import TrackingPage from "./pages/TrackingPage";
 import Dashboard from "./pages/Dashboard";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +30,8 @@ const App = () => (
           <Route path="/sukses" element={<SubmissionSuccess />} />
           <Route path="/lacak" element={<TrackingPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

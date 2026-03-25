@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Smartphone } from "lucide-react";
 import PageLayout from "@/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
 
@@ -22,7 +22,9 @@ const SubmissionSuccess = () => {
         </div>
 
         <div className="bg-card border rounded-xl p-5 mb-8 text-left">
-          <p className="text-sm font-semibold mb-2">📱 Update via WhatsApp</p>
+          <p className="text-sm font-semibold mb-2 flex items-center gap-2">
+            <Smartphone className="w-4 h-4 text-primary" /> Update via WhatsApp
+          </p>
           <p className="text-sm text-muted-foreground">
             Status permohonan Anda akan dikirimkan melalui WhatsApp ke nomor yang telah didaftarkan. Simpan nomor registrasi di atas.
           </p>

@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, MessageCircle, FileText, CheckCircle } from "lucide-react";
+import { ArrowRight, MessageCircle, FileText, CheckCircle, Phone } from "lucide-react";
 import PageLayout from "@/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
 import { services } from "@/data/services";
+import ServiceIcon from "@/components/ServiceIcon";
 import heroImg from "@/assets/hero-illustration.png";
 
 const steps = [
@@ -27,7 +28,7 @@ const Home = () => (
             </Button>
             <Button asChild variant="outline" size="lg" className="text-base px-8 py-6 rounded-xl">
               <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer">
-                💬 Chat WhatsApp
+                <Phone className="mr-2 w-5 h-5" /> Chat WhatsApp
               </a>
             </Button>
           </div>
@@ -66,7 +67,9 @@ const Home = () => (
               to={`/layanan/${s.id}`}
               className="flex items-start gap-4 bg-card rounded-xl p-5 border shadow-sm hover:shadow-md hover:border-primary/30 transition-all group"
             >
-              <span className="text-3xl">{s.icon}</span>
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <ServiceIcon name={s.icon} className="w-6 h-6 text-primary" />
+              </div>
               <div className="flex-1">
                 <h3 className="text-subheading group-hover:text-primary transition-colors">{s.title}</h3>
                 <p className="text-sm text-muted-foreground mt-1">{s.description}</p>

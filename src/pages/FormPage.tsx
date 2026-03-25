@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Upload } from "lucide-react";
 import PageLayout from "@/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -92,7 +92,7 @@ const FormPage = () => {
               <div className="border-2 border-dashed rounded-xl p-8 text-center">
                 <input type="file" id="file" className="hidden" multiple accept="image/*,.pdf" />
                 <label htmlFor="file" className="cursor-pointer">
-                  <div className="text-4xl mb-2">📎</div>
+                  <Upload className="w-10 h-10 text-muted-foreground mx-auto mb-2" />
                   <p className="text-sm font-semibold text-primary">Klik untuk memilih file</p>
                   <p className="text-xs text-muted-foreground mt-1">Foto atau PDF, maks. 5 MB per file</p>
                 </label>
@@ -102,7 +102,10 @@ const FormPage = () => {
                 <p className="text-sm font-semibold text-accent-foreground mb-2">Dokumen yang diperlukan:</p>
                 <ul className="text-sm text-muted-foreground space-y-1">
                   {service.documents.map((d, i) => (
-                    <li key={i}>• {d}</li>
+                    <li key={i} className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground shrink-0" />
+                      {d}
+                    </li>
                   ))}
                 </ul>
               </div>

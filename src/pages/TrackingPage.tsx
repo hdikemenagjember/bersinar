@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { Search, Check } from "lucide-react";
 import PageLayout from "@/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,7 +48,7 @@ const TrackingPage = () => {
                   <div key={i} className="flex gap-4">
                     <div className="flex flex-col items-center">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${s.done ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
-                        {s.done ? "✓" : i + 1}
+                        {s.done ? <Check className="w-4 h-4" /> : i + 1}
                       </div>
                       {i < statusSteps.length - 1 && (
                         <div className={`w-0.5 h-12 ${s.done ? "bg-primary" : "bg-muted"}`} />
