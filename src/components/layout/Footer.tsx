@@ -1,4 +1,5 @@
-import { MapPin, Phone, Mail, Clock, MessageCircle } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, MessageCircle, Lock } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => (
   <footer className="bg-primary text-primary-foreground mt-12">
@@ -34,8 +35,11 @@ const Footer = () => (
         </a>
       </div>
     </div>
-    <div className="border-t border-primary-foreground/20 text-center py-4 text-xs opacity-70">
-      &copy; 2026 Kementerian Agama Kabupaten Jember. Semua hak dilindungi.
+    <div className="border-t border-primary-foreground/20 flex items-center justify-between px-6 py-4 text-xs opacity-70">
+      <span>&copy; 2026 Kementerian Agama Kabupaten Jember. Semua hak dilindungi.</span>
+      <Link to="/admin" className="inline-flex items-center gap-1 hover:opacity-100 transition-opacity">
+        <Lock className="w-3 h-3" /> Admin
+      </Link>
     </div>
   </footer>
 );
