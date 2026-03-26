@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   LogOut, Users, FileText, CheckCircle, Clock,
-  Search, Eye, MoreHorizontal, Shield, ShieldCheck,
+  Search, Eye, MoreHorizontal, Shield, ShieldCheck, Loader2,
 } from "lucide-react";
 import PageLayout from "@/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/integrations/supabase/client";
 
 type AdminRole = "super_admin" | "admin_layanan";
 
@@ -16,11 +17,6 @@ const allApplications = [
   { id: "KMG-62019384", name: "Budi Santoso", service: "Bantuan Keagamaan", date: "10 Mar 2026", status: "Verifikasi" },
   { id: "KMG-51029384", name: "Dewi Rahmawati", service: "Konsultasi Hukum", date: "8 Mar 2026", status: "Diterima" },
   { id: "KMG-40293847", name: "Hasan Basri", service: "Surat Rekomendasi", date: "5 Mar 2026", status: "Selesai" },
-];
-
-const adminList = [
-  { name: "Super Admin", role: "super_admin", email: "superadmin@kemenag-jember.go.id" },
-  { name: "Admin Layanan", role: "admin_layanan", email: "admin@kemenag-jember.go.id" },
 ];
 
 const statusColor: Record<string, string> = {
@@ -36,23 +32,94 @@ const AdminDashboard = () => {
   const [adminName, setAdminName] = useState("");
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState<"permohonan" | "admin">("permohonan");
+  const [loading, setLoading] = useState(true);
+  const [adminList, setAdminList] = useState<{ name: string; role: string; email: string }[]>([]);
 
   useEffect(() => {
-    const storedRole = sessionStorage.getItem("admin_role") as AdminRole | null;
-    const storedName = sessionStorage.getItem("admin_name");
-    if (!storedRole) {
-      navigate("/admin");
-      return;
-    }
-    setRole(storedRole);
-    setAdminName(storedName || "Admin");
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/admin");
+        return;
+      }
+
+      // Get user role
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", session.user.id)
+        .limit(1)
+        .single();
+
+      if (!roles) {
+        await supabase.auth.signOut();
+        navigate("/admin");
+        return;
+      }
+
+      // Get profile
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", session.user.id)
+        .single();
+
+      setRole(roles.role as AdminRole);
+      setAdminName(profile?.full_name || session.user.email || "Admin");
+      setLoading(false);
+    };
+
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) navigate("/admin");
+    });
+
+    return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("admin_role");
-    sessionStorage.removeItem("admin_name");
+  // Load admin list for super_admin
+  useEffect(() => {
+    if (role !== "super_admin") return;
+    const loadAdmins = async () => {
+      const { data } = await supabase
+        .from("user_roles")
+        .select("user_id, role");
+      if (!data) return;
+
+      const admins = await Promise.all(
+        data.map(async (r) => {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("full_name, email")
+            .eq("id", r.user_id)
+            .single();
+          return {
+            name: profile?.full_name || "Admin",
+            email: profile?.email || "",
+            role: r.role,
+          };
+        })
+      );
+      setAdminList(admins);
+    };
+    loadAdmins();
+  }, [role]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     navigate("/admin");
   };
+
+  if (loading) {
+    return (
+      <PageLayout>
+        <div className="container py-16 flex justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </PageLayout>
+    );
+  }
 
   if (!role) return null;
 
@@ -145,7 +212,6 @@ const AdminDashboard = () => {
               </div>
             </div>
 
-            {/* Table */}
             <div className="bg-card border rounded-xl overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -221,6 +287,13 @@ const AdminDashboard = () => {
                       </td>
                     </tr>
                   ))}
+                  {adminList.length === 0 && (
+                    <tr>
+                      <td colSpan={3} className="p-8 text-center text-muted-foreground">
+                        Belum ada admin terdaftar.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
