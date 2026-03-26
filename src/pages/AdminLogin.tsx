@@ -1,33 +1,53 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Lock, LogIn } from "lucide-react";
+import { Lock, LogIn, Loader2 } from "lucide-react";
 import PageLayout from "@/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
+
     const form = new FormData(e.currentTarget);
-    const username = form.get("username") as string;
+    const email = form.get("email") as string;
     const password = form.get("password") as string;
 
-    // Temporary UI-only mock — will be replaced with real auth
-    if (username === "superadmin" && password === "admin123") {
-      sessionStorage.setItem("admin_role", "super_admin");
-      sessionStorage.setItem("admin_name", "Super Admin");
-      navigate("/admin/dashboard");
-    } else if (username === "admin" && password === "admin123") {
-      sessionStorage.setItem("admin_role", "admin_layanan");
-      sessionStorage.setItem("admin_name", "Admin Layanan");
-      navigate("/admin/dashboard");
-    } else {
-      setError("Username atau password salah.");
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (authError) {
+      setError("Email atau password salah.");
+      setLoading(false);
+      return;
     }
+
+    // Check if user has an admin role
+    const { data: roles } = await supabase
+      .from("user_roles")
+      .select("role")
+      .limit(1)
+      .single();
+
+    if (!roles) {
+      await supabase.auth.signOut();
+      setError("Akun Anda tidak memiliki akses admin.");
+      setLoading(false);
+      return;
+    }
+
+    setLoading(false);
+    navigate("/admin/dashboard");
   };
 
   return (
@@ -46,8 +66,8 @@ const AdminLogin = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="username" className="text-sm font-semibold">Username</Label>
-              <Input id="username" name="username" placeholder="Masukkan username" required className="mt-1 py-5 text-base rounded-xl" />
+              <Label htmlFor="email" className="text-sm font-semibold">Email</Label>
+              <Input id="email" name="email" type="email" placeholder="Masukkan email" required className="mt-1 py-5 text-base rounded-xl" />
             </div>
             <div>
               <Label htmlFor="password" className="text-sm font-semibold">Password</Label>
@@ -58,8 +78,9 @@ const AdminLogin = () => {
               <p className="text-sm text-destructive font-medium">{error}</p>
             )}
 
-            <Button type="submit" size="lg" className="w-full rounded-xl py-6 text-base">
-              <LogIn className="w-5 h-5 mr-2" /> Masuk
+            <Button type="submit" size="lg" className="w-full rounded-xl py-6 text-base" disabled={loading}>
+              {loading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <LogIn className="w-5 h-5 mr-2" />}
+              Masuk
             </Button>
           </form>
         </div>
